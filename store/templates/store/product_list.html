@@ -1,0 +1,203 @@
+{% load static %}
+<html>
+  <head>  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'store/styles.css' %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{% static 'store/index.js' %}"></script>
+  </head>
+  <body>
+    <nav>
+      <div class="name">Waweru</div>
+       
+<div class="mobile-nav">
+           <a href="{% url 'view_cart' %}">
+          <i class="fa fa-shopping-cart" aria-hidden="true"></i> <span>{{ cart_count}} </span></a
+        >
+          <div class="xx" onclick="mobile()"><i class="fa fa-ellipsis-v" aria-hidden="true"></i> </div>
+          <div id="pp-mobile" class="pp-mobile">
+         <a href="{% url 'signup' %}">Sign up </a>
+        <a href="{% url 'login' %}">Login </a>
+        <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Logout</button>
+    </form>
+  </div>
+      
+         </div>
+        </div>
+ 
+<!--mobile viewss-->
+    <div class="search" style="position: relative;">
+    <form method="GET" action="{% url 'search' %}" data-suggest-url="{% url 'search' %}">
+    <input type="text" id="search-boxmobile" name="q" placeholder="search for products, brands" autocomplete="off">
+    <button type="submit">Search</button>
+    <ul id="suggestions-listmobile"></ul>
+</form>
+</div>
+      <div class="nav1">
+        <a href="{% url 'signup' %}"><i class="fa fa-user-plus" aria-hidden="true"></i> Sign up </a>
+        <a href="{% url 'login' %}"><i class="fa fa-sign-in" aria-hidden="true"></i> Login </a>
+        
+        <a href="{% url 'view_cart' %}">
+          <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart  <span>{{ cart_count}} </span></a
+        >
+      <button onclick="showProfile()"><i class="fa fa-user" aria-hidden="true"></i> Profile</button>
+
+{% if user.is_authenticated %}
+  <div id="profiles" class="profile">
+    <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Username: {{ user.username }}</p>
+
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Logout</button>
+    </form>
+  </div>
+{% endif %}
+     
+    </nav>
+     <!--mobile viewsss-->
+       <div class="search-mobile">
+  <button class="humberger" onclick="humberger()">
+    <i class="fa fa-bars" aria-hidden="true"></i>
+  </button>
+
+  <form method="GET" action="{% url 'search' %}" data-suggest-url="{% url 'search' %}">
+    <div class="search-wrapper">
+      <input type="text" id="search-box" name="q" placeholder="search for products" autocomplete="off">
+      <ul id="suggestions-list"></ul>
+    </div>
+    <button type="submit">Search</button>
+  </form>
+</div>
+
+     <div id="hum"class="others">
+            <div class=""><a href="{% url 'category_products' 'food' %}" class="product-link">Food products</a></div>
+            <div class=""><a href="{% url 'category_products' 'shoeformen' %}" class="product-link">Shoes</a></div>
+            <div class=""><a href="{% url 'category_products' 'offer' %}" class="product-link">Elecronics</a></div>
+            <div class="">Beauty</div>
+            <div class="">Fruits & vegetables</div>
+            <div class="">Fashion </div>
+            <div class="">Stationery</div>
+            <div class=""><a href="{% url 'category_products' 'Deals' %}" class="product-link">Tv & Audio</a></div>
+            <div class="">Baby products</div>
+            <div class="">Appliances</div>
+          </div>
+
+    <div class="container">
+      <div class="side1">
+      </div>
+      <div class="main">
+             
+ <h2>Top |Deals</h2>
+        <div class="product">
+       {% for product in deals %}
+  <div class="product-card">
+    <a href="{% url 'product_detail' product.id %}" class="product-link">
+      <img src="{{ product.default_variant.image.url }}" alt="{{ product.name }}" />
+      <h3>{{ product.name }}</h3>
+      <p>Ksh {{ product.default_variant.price }}</p>
+    </a>
+    <form action="{% url 'add_to_cart' product.default_variant.id %}" method="post">
+      {% csrf_token %}
+      <button type="submit">Add to Cart</button>
+    </form>
+  </div>
+{% empty %}
+  <p>No product found in this category.</p>
+{% endfor %}
+
+        </div>
+        <h2>Food</h2>
+        <div class="product">
+       {% for product in food %}
+  <div class="product-card">
+    <a href="{% url 'product_detail' product.id %}" class="product-link">
+      <img src="{{ product.default_variant.image.url }}" alt="{{ product.name }}" />
+      <h3>{{ product.name }}</h3>
+      <p>Ksh {{ product.default_variant.price }}</p>
+    </a>
+    <form action="{% url 'add_to_cart' product.default_variant.id %}" method="post">
+      {% csrf_token %}
+      <button type="submit">Add to Cart</button>
+    </form>
+    
+  </div>
+{% empty %}
+  <p>No product found in this category.</p>
+{% endfor %}
+
+        </div>
+            
+        <h2>Electronics</h2>
+        <div class="product">
+          {% for product in  electronics %}
+  <div class="product-card">
+    <a href="{% url 'product_detail' product.id %}" class="product-link">
+      <img src="{{ product.default_variant.image.url }}" alt="{{ product.name }}" />
+      <h3>{{ product.name }}</h3>
+      <p>Ksh {{ product.default_variant.price }}</p>
+    </a>
+    <form action="{% url 'add_to_cart' product.default_variant.id %}" method="post">
+      {% csrf_token %}
+      <button type="submit">Add to Cart</button>
+    </form>
+  </div>
+{% empty %}
+  <p>No product found in this category.</p>
+{% endfor %}
+
+        </div>
+        <div class="about">
+         <h2>Shoes </h2>
+         <div class="see-more"> <a href="{% url 'category_products' 'shoeformen' %}" >see more</a> </div> 
+        </div>
+        <div class="product">
+       {% for product in shoeformen %}
+  <div class="product-card">
+    <a href="{% url 'product_detail' product.id %}" class="product-link">
+      <img src="{{ product.default_variant.image.url }}" alt="{{ product.name }}" />
+      <h3>{{ product.name }}</h3>
+      <p>Ksh {{ product.default_variant.price }}</p>
+    </a>
+    <form action="{% url 'add_to_cart' product.default_variant.id %}" method="post">
+      {% csrf_token %}
+      <button type="submit">Add to Cart</button>
+    </form>
+  </div>
+{% empty %}
+  <p>No product found in this category.</p>
+{% endfor %}
+
+        </div>
+      </div>
+      <div class="side2">
+        </div>
+        
+      </div>
+
+    </div>
+    
+
+    <div class="footer">
+      dan mwangi
+      <a href="">Facebook </a>
+      <a href="">LinkedIn </a>
+      <a href="">X </a>
+      <a href="">Instagram </a>
+      <a href="">Whatsapp </a>
+    </div>
+  </body>
+  <script>
+    function mobile(){
+   let box= document.getElementById("pp-mobile");
+    box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+   function humberger(){
+   let box= document.getElementById("hum");
+    box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+</script>
+</html>

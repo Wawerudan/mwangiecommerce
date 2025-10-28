@@ -1,0 +1,98 @@
+{%load static%}
+<html>
+  <head>
+    <link rel="stylesheet" href="{% static 'store/styles.css' %}" />
+  </head>
+  <body>
+     <nav>
+      <div class="name">Waweru</div>
+
+      <div class="nav1">
+        <a href="{% url 'signup' %}">Sign up </a>
+        <a href="{% url 'login' %}">Login </a>
+        <a href="">Sign up </a>
+        <a href="{% url 'view_cart' %}">
+          🛒 Cart ({{ request.session.cart|length|default:0 }})</a
+        >
+        </nav>
+    <div class="container">
+      <div class="side1"></div>
+      <div class="main">
+        <div class="main-detail">   
+           {% if variants %}
+         <div class="main-detail2">
+  <img src="{{ variants.0.image.url }}" width="200">
+</div>
+<div class="main-detail1">
+  <h1>{{ product.name }}</h1>
+  <p class="price">KSh {{ variants.0.price }}</p>
+  <form action="{% url 'add_to_cart' product.variants.first.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Add to Cart</button>
+  </form>
+</div>
+
+        </div>
+<h1> Product detail </h1>
+        <p>Description: {{ variants.0.product.description }}</p>
+        {% else %}
+<p>No variant matches your filters.</p>
+{% endif %}
+      
+
+        <h2>Customers also viewed</h2>
+        <div class="product">
+         {% for rel in related_products %}
+  <div class="product-card">
+    <a href="{% url 'product_detail' rel.id %}" class="product-link">
+      <img src="{{ rel.variants.first.image.url }}" alt="{{ rel.name }}" />
+      <p>{{ rel.name }}</p>
+      <p>Ksh {{ rel.variants.first.price }}</p>
+    </a>
+  </div>
+{% endfor %}
+
+
+        </div>
+      </div>
+
+      <div class="side2">
+        
+     <h4>Colors</h4>
+<ul>
+    {% for color in available_colors %}
+    <li>
+        <a href="?color={{ color }}{% if request.GET.size %}&size={{ request.GET.size }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">
+            {{ color|capfirst }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+
+<h4>Sizes</h4>
+<ul>
+    {% for size in available_sizes %}
+    <li>
+        <a href="?size={{ size }}{% if request.GET.color %}&color={{ request.GET.color }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">
+            {{ size|capfirst }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+
+
+<h4>Price</h4>
+<form method="get">
+    <input type="number" name="min_price" placeholder="Min" value="{{ request.GET.min_price }}">
+    <input type="number" name="max_price" placeholder="Max" value="{{ request.GET.max_price }}">
+    {% if request.GET.color %}<input type="hidden" name="color" value="{{ request.GET.color }}">{% endif %}
+    {% if request.GET.size %}<input type="hidden" name="size" value="{{ request.GET.size }}">{% endif %}
+    <button type="submit">Apply</button>
+</form>
+
+<!-- Display filtered variants (first variant image shown as main) -->
+
+<div>
+    </div>
+  </body>
+</html>

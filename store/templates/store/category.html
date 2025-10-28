@@ -1,0 +1,108 @@
+{% load static %}
+<html>
+  <head>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'store/styles.css' %}" />
+    <script src="{% static 'store/index.js' %}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <nav>
+      <div class="name">Waweru</div>
+
+      <div class="nav1">
+         <a href="{% url 'signup' %}"><i class="fa fa-user-plus" aria-hidden="true"></i> Sign up </a>
+        <a href="{% url 'login' %}"><i class="fa fa-sign-in" aria-hidden="true"></i> Login </a>
+        
+        <a href="{% url 'view_cart' %}">
+          <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart  <span>{{ cart_count}} </span></a
+        >
+      <button onclick="showProfile()"><i class="fa fa-user" aria-hidden="true"></i> Profile</button>
+        </div>
+        </nav>
+        
+      
+
+ <a href="{% url 'product_list' %}" class="back-btn">Back to Home</a>
+
+ 
+ <div class="container ff">
+  <div class="side1 filters">
+     <h2> Filter </h2>
+            <h4>Colors</h4>
+            
+     <div class="filt-cc1">
+            {% for color in available_colors %}
+           <div class="filt-cc">
+                <a  class="product-link" href="{% url 'search' %}?q={{ query }}&color={{ color }}
+                {% if request.GET.size %}&size={{ request.GET.size }}{% endif %}
+                {% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}
+                {% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">
+                    {{ color|capfirst }}
+        
+           </div>
+            {% endfor %}
+        </div>
+     <h4>Sizes</h4>
+            <div class="filt-cc1">
+            {% for size in available_sizes %}
+       
+            <div class="filt-cc">
+                <a class="product-link" href="{% url 'search' %}?q={{ query }}&size={{ size }}
+                {% if request.GET.color %}&color={{ request.GET.color }}{% endif %}
+                {% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}
+                {% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">
+                    {{ size|capfirst }}
+                </a>
+           
+            </div>
+            {% endfor %}
+        </div>
+
+        <h4>Price</h4>
+        <div class="filter-form">
+        <form method="get">
+            <input type="hidden" name="q" value="{{ query }}">
+            <input type="number" name="min_price" placeholder="Min" value="{{ request.GET.min_price }}"> <br> <br>
+            <input type="number" name="max_price" placeholder="Max" value="{{ request.GET.max_price }}">
+            {% if request.GET.color %}<input type="hidden" name="color" value="{{ request.GET.color }}">{% endif %}
+            {% if request.GET.size %}<input type="hidden" name="size" value="{{ request.GET.size }}">{% endif %}
+            <button type="submit">Apply</button>
+        </form>
+    </div>
+  </div>
+  <div class="main">
+<h2>{{ category.name }}</h2>
+  <div class="main1">
+  {% for product in page_obj %}
+    <div class="main1-card">
+      <a href="{% url 'product_detail' product.id %}" class="product-link">  
+      <img src="{{ product.default_variant.image.url }}" alt="{{ product.name }}" width="190">
+      </a>
+      <p>{{ product.name }}</p>
+       <form action="{% url 'add_to_cart' product.default_variant.id %}" method="post">
+      {% csrf_token %}
+      <button type="submit">Add to Cart</button>
+    </form>
+     
+    </div>
+  {% endfor %}
+  <div class="next">
+  {% if page_obj.has_previous %}
+      <a href="?page=1">&laquo; first</a>
+      <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+    {% endif %}
+
+    
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+    
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">next</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+    {% endif %}
+  </div>
+</div>
+</div>
+</body>
+</html>

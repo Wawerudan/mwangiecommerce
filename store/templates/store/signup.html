@@ -1,0 +1,38 @@
+{%load static%}
+
+<html>
+  <head>
+    <title>Sign Up</title>
+    
+    <link rel="stylesheet" href="{% static 'store/styles.css' %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <div class="login-cont">
+    <div class="login-cont1">
+      <p>{% if messages %} {% for message in messages %}</p>
+
+      <p style="color: green">{{ message }}</p>
+      {% endfor %} {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div>{{ form.username.label_tag }} {{ form.username }}</div>
+
+        <div>{{ form.first_name.label_tag }} {{ form.first_name }}</div>
+
+        <div>{{ form.last_name.label_tag }} {{ form.last_name }}</div>
+
+        <div>{{ form.email.label_tag }} {{ form.email }}</div>
+
+        <div>{{ form.password1.label_tag }} {{ form.password1 }}</div>
+
+        <div>{{ form.password2.label_tag }} {{ form.password2 }}</div>
+
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+    </div>
+  </body>
+</html>

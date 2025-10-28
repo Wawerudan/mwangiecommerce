@@ -1,0 +1,119 @@
+{% load static %}
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" /> 
+    <link rel="stylesheet" href="{% static 'store/styles.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+<div class="container">
+    <div class="side1">
+    </div>
+  <div class="main">
+    <h2> cart </h2>
+  {% if cart_items %}
+    {% for item in cart_items %}
+    
+      <div class="cart">
+        <img src="{{ item.variant.image.url }}" alt="{{ item.variant.product.name }}">
+        <p>{{ item.variant.product.name }}</p>
+        <p>Ksh {{ item.variant.price }}</p>
+        <p>Quantity: {{ item.quantity }}</p>
+
+        <form action="{% url 'remove_from_cart' item.variant.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit"><i class="fa fa-minus" aria-hidden="true"></i></button>
+        </form>
+
+        <form action="{% url 'add_to_cart' item.variant.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit"><i class="fa fa-plus" aria-hidden="true"></i></button>
+        </form>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>Your cart is empty.</p>
+  {% endif %}
+  <!--mpesa div-->
+    <div class="mpesamobile">
+    <h4>Total:</h4>
+  Ksh {{ total }}    
+    <button onclick="mpesaPay1()">Checkout  {{ total }}</button>
+    {% if user.is_authenticated %}
+  <div id="paympesa1" class="pay-withmpesa1 phone">
+    {% if error %}
+      <p style="color:red;font-size:20px;">{{ error }}</p>
+    {% endif %}
+    <form method="POST" action="/stkpush/">
+      {% csrf_token %}
+      <input type="number" name="number" value="254" maxlength="12" required>
+      <button type="submit">Pay now</button>
+    </form>
+    {% if messages %}
+  <div class="message">
+    {% for message in messages %}
+      <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+  </div>
+{% else %}
+  <p style="color:red; font-size:18px;">
+    Please <a href="/login/">login</a> to make a payment.
+  </p>
+{% endif %}
+  </div>
+
+  <!--mpesa pay-->
+    </div>
+   
+<div class="side2">
+<h4>Total:</h4>
+  Ksh {{ total }}    
+    <button onclick="mpesaPay()">Checkout  {{ total }}</button>
+    {% if user.is_authenticated %}
+  <div id="paympesa" class="pay-withmpesa">
+    {% if error %}
+      <p style="color:red;font-size:20px;">{{ error }}</p>
+    {% endif %}
+    <form method="POST" action="/stkpush/">
+      {% csrf_token %}
+      <input type="number" name="number" value="254" maxlength="12" required>
+      <button type="submit">Pay now</button>
+    </form>
+    {% if messages %}
+  <div class="message">
+    {% for message in messages %}
+      <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+  </div>
+{% else %}
+  <p style="color:red; font-size:18px;">
+    Please <a href="/login/">login</a> to make a payment.
+  </p>
+{% endif %}
+
+  </div>
+  
+</div>
+
+<script>
+function mpesaPay(){
+  let pay = document.getElementById("paympesa");
+  pay.style.display = (pay.style.display === "block") ? "none" : "block";
+}
+function mpesaPay1(){
+  let pay = document.getElementById("paympesa1");
+  pay.style.display = (pay.style.display === "block") ? "none" : "block";
+}
+</script>
+</body>
+</html>
