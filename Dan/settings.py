@@ -9,7 +9,10 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 from pathlib import Path
 import  pymysql
@@ -23,10 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4k4z%%0ogvo8_sru%_f580ryfcixx@nvov!_=q3q-g@d=d$1nw'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret')
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -35,7 +36,7 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "wawerumwangidan@gmail.com"
-EMAIL_HOST_PASSWORD = "xspw royh nkgp udbi"  # from Google App Passwords
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD") # from Google App Passwords
 # Application definition
 
 INSTALLED_APPS = [
@@ -88,35 +89,19 @@ WSGI_APPLICATION = 'Dan.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 import os
+import dj_database_url
+USE_CLOUD_DB = os.getenv("USE_CLOUD_DB", "False") == "True"
 
-USE_REMOTE_DB = True  # Change to False for local development
-
-if USE_REMOTE_DB:
-    DATABASES={
-         'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'br0uufxbfe3wcmx37cxa',  # Your Clever Cloud DB name
-            'USER': 'uvs3slwo6ah0aqvf',
-            'PASSWORD': 'qV9SrT6BOfgmTLzLNYaR',
-            'HOST': 'br0uufxbfe3wcmx37cxa-mysql.services.clever-cloud.com',
-            'PORT': '3306',
-            'OPTIONS': {
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            },
-        }
-    }
+if USE_CLOUD_DB:
+    DATABASE_URL = os.getenv("CLOUD_DATABASE_URL")
 else:
-     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME':  'ecommerce',
-        'USER': 'root',
-        'PASSWORD':'Manchester45??',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        
-    }
+    DATABASE_URL = os.getenv("LOCAL_DATABASE_URL")
+
+DATABASES = {
+    'default': dj_database_url.config(default=DATABASE_URL)
 }
+
+
 
 
 # Password validation
