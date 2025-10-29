@@ -91,6 +91,7 @@ WSGI_APPLICATION = 'Dan.wsgi.application'
 import os
 import dj_database_url
 
+# Decide which DB to use
 USE_CLOUD_DB = os.getenv("USE_CLOUD_DB", "False") == "True"
 
 if USE_CLOUD_DB:
@@ -98,13 +99,21 @@ if USE_CLOUD_DB:
 else:
     DATABASE_URL = os.getenv("LOCAL_DATABASE_URL")
 
+# Default fallback (in case DATABASE_URL is missing)
+DEFAULT_DATABASE_URL = "sqlite:///db.sqlite3"
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default=DATABASE_URL,
+    "default": dj_database_url.config(
+        default=DATABASE_URL or DEFAULT_DATABASE_URL,
         conn_max_age=600,
-        engine='django.db.backends.mysql'
+        ssl_require=False,
     )
 }
+
+# ✅ If dj_database_url didn't set ENGINE (e.g. empty env), use fallback
+if "ENGINE" not in DATABASES["default"]:
+    DATABASES["default"]["ENGINE"] = "django.db.backends.mysql"
+
 
 
 
