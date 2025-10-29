@@ -90,6 +90,7 @@ WSGI_APPLICATION = 'Dan.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 import os
 import dj_database_url
+
 USE_CLOUD_DB = os.getenv("USE_CLOUD_DB", "False") == "True"
 
 if USE_CLOUD_DB:
@@ -98,8 +99,13 @@ else:
     DATABASE_URL = os.getenv("LOCAL_DATABASE_URL")
 
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL)
+    'default': dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+        engine='django.db.backends.mysql'
+    )
 }
+
 
 
 
